@@ -1,0 +1,2 @@
+# Pnevmoniya-tashxisi
+Pnevmoniya tashxisi.
