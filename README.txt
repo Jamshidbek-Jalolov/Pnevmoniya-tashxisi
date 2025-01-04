@@ -1,8 +1,4 @@
 
-
-Here is a sample `README.txt` file for your GitHub repository based on the code provided:
-
-```
 # Pneumonia Detection using ResNet50
 
 This repository contains the implementation of a deep learning model to classify X-ray images into two categories: Pneumonia and Normal. The model is built using the ResNet50 architecture, which is fine-tuned to achieve high accuracy on the Pneumonia dataset.
