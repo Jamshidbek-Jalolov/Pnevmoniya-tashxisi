@@ -1,81 +1,101 @@
+# Pneumonia Image Classification
 
-# Pneumonia Detection using ResNet50
+## Overview
 
-This repository contains the implementation of a deep learning model to classify X-ray images into two categories: Pneumonia and Normal. The model is built using the ResNet50 architecture, which is fine-tuned to achieve high accuracy on the Pneumonia dataset.
+This project aims to classify images into two categories, likely related to the presence or absence of pneumonia, using a convolutional neural network (CNN) based on the EfficientNetB0 architecture. The code is designed to work with data from a Kaggle competition named "pnevmoniya."
 
-## Project Overview
+## Table of Contents
 
-- **Dataset**: The dataset used for training and testing the model is provided by the Kaggle competition 'Pnevmoniya'. It consists of chest X-ray images categorized into two classes: "Normal" and "Pneumonia".
-- **Model Architecture**: The model is based on the pre-trained ResNet50, which is fine-tuned to improve performance for this specific task.
-- **Data Augmentation**: Data augmentation techniques such as rotation, width/height shift, zoom, and horizontal flip are applied to increase the robustness of the model.
-- **Fine-tuning**: The model undergoes fine-tuning by unfreezing the layers of ResNet50 after initial training.
-- **Metrics**: The model is evaluated using accuracy, confusion matrix, classification report, and ROC-AUC score.
+1. **Dependencies**
+2. **Data Preparation**
+3. **Model Architecture**
+4. **Training**
+5. **Evaluation**
+6. **Submission Preparation**
+7. **Instructions to Run the Code**
+8. **Notes and Considerations**
 
-## Requirements
+## 1. Dependencies
 
 - Python 3.x
-- TensorFlow
-- NumPy
-- pandas
+- TensorFlow 2.x
+- Keras
 - scikit-learn
 - matplotlib
-- Kaggle API
+- pandas
+- NumPy
+- zipfile
+- os
 
-## Installation
+Ensure that all dependencies are installed in your environment before running the code.
 
-1. Clone the repository:
-   ```
-   git clone https://github.com/yourusername/pneumonia-detection.git
-   cd pneumonia-detection
-   ```
+## 2. Data Preparation
 
-2. Install the required packages:
-   ```
-   pip install -r requirements.txt
-   ```
+The data is assumed to be downloaded from the Kaggle competition and extracted into specific directories. The code includes functionality to download and extract the data using the Kaggle API if the API key is provided.
 
-3. Set up your Kaggle API credentials:
-   - Download your `kaggle.json` from your Kaggle account (Account > API > Create New API Token).
-   - Place `kaggle.json` in the `~/.kaggle/` directory (or use the provided setup in the code).
+### Data Directories
 
-## Usage
+- `train_dir`: Path to the training data directory.
+- `test_dir`: Path to the test data directory.
+- `sample_solution_path`: Path to the sample submission CSV file.
 
-1. Download the dataset using the Kaggle API by running the following command:
-   ```bash
-   kaggle competitions download -c pnevmoniya
-   ```
+**Note:** Update the paths in the code to match your local file structure.
 
-2. Extract the dataset:
-   ```bash
-   unzip pnevmoniya.zip -d /content/pnevmoniya/
-   ```
+## 3. Model Architecture
 
-3. Run the training script:
-   ```python
-   python train_model.py
-   ```
+The model is built using the EfficientNetB0 pre-trained on ImageNet as the base, with additional layers on top for fine-tuning:
 
-4. The training process involves two phases:
-   - Initial training with the frozen layers of the ResNet50 model.
-   - Fine-tuning the ResNet50 model by unfreezing all layers.
+- **Base Model:** EfficientNetB0 (frozen layers)
+- **Top Layers:**
+  - Global Average Pooling
+  - Dense layer with 128 units and ReLU activation
+  - Dropout (rate=0.5)
+  - Output layer with 1 unit and sigmoid activation for binary classification
 
-5. After training, the model is evaluated using test data, and the predictions are saved to a CSV file for submission.
+## 4. Training
 
-## Output
+- **Optimizer:** Adam
+- **Loss Function:** Binary Cross-Entropy
+- **Metrics:** Accuracy
+- **Callbacks:** Reduce Learning Rate on Plateau
+- **Epochs:** 10 ( adjustable via `EPOCHS` constant)
+- **Batch Size:** 32 ( adjustable via `BATCH_SIZE` constant)
 
-- **Training History Plots**: Plots showing the training and validation accuracy and loss over epochs.
-- **ROC Curve**: A graph representing the True Positive Rate against the False Positive Rate.
-- **Classification Report**: Precision, Recall, F1-Score, and Support for both classes.
-- **Confusion Matrix**: Visual representation of true vs predicted labels.
+Data augmentation is applied during training to improve generalization.
 
-## Submission
+## 5. Evaluation
 
-The model's predictions on the test dataset are saved in a CSV file (`submission.csv`) for submission to the Kaggle competition.
+The model is evaluated on the validation set using the following metrics:
 
-## License
+- **Classification Report:** Precision, Recall, F1-Score, and Support for each class.
+- **Confusion Matrix:** To visualize true positives, true negatives, false positives, and false negatives.
+- **ROC Curve and AUC:** To assess the trade-off between true positive rate and false positive rate.
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## 6. Submission Preparation
 
-```
+Predictions are made on the test set, and a submission CSV file is generated with image filenames and predicted labels.
 
-Feel free to customize it further for your needs! Let me know if you'd like any adjustments.
+## 7. Instructions to Run the Code
+
+1. **Set Up Kaggle API (Optional but Recommended):**
+   - Place your `kaggle.json` file in the current directory to automatically download the data.
+   - Ensure the Kaggle API is installed and properly configured.
+
+2. **Update Data Paths:**
+   - Modify `train_dir`, `test_dir`, and `sample_solution_path` in the code to point to your data directories.
+
+3. **Run the Code:**
+   - Execute the script in a Python environment with all dependencies installed.
+   - The code will perform data loading, model training, evaluation, and submission preparation sequentially.
+
+4. **Results:**
+   - The trained model's performance is printed in the console.
+   - A ROC curve plot is saved as `roc_curve.png`.
+   - The submission file is saved as `submission.csv`.
+
+## 8. Notes and Considerations
+
+- **Data Augmentation:** Applied only to the training data to prevent information leakage.
+- **Model Fine-Tuning:** The base model layers are frozen; consider fine-tuning for better performance.
+- **Computational Resources:** Training deep learning models requires significant computational power; consider using GPUs.
+- **License:** This code is provided under the MIT License. Feel free to modify and use it for your purposes.
